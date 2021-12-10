@@ -54,7 +54,7 @@ client.on("message", message => {
   var msg = message;
 
   // botへのリプライは無視
-  if (msg.channel.id==867666631197982741 || msg.channel.id==871289038181646367 || msg.channel.id==838939721198469120 || msg.channel.id==877767122414100480 || msg.channel.id==838965654438543390 || msg.channel.id==906691166286803004) {
+  if (msg.channel.id==867666631197982741 || msg.channel.id==871289038181646367 || msg.channel.id==838939721198469120 || msg.channel.id==877767122414100480 || msg.channel.id==838965654438543390 || msg.channel.id==906691166286803004 || msg.channel.id==911602953373241344) {
     console.log("bot is cansel");
     return;
   } else {
@@ -64,15 +64,87 @@ client.on("message", message => {
   }
 
   function sendGAS(msg) {
-    if (msg.attachments.size) {
+    const file=message.attachments.map(attachment=>attachment.url)
+    
+    if (check(file, msg.attachments.size)==1) {
       // 添付された全ての画像(ファイル)のURLを取得する
-      //console.log(msg.attachments.first().url);
+      //message.attachments.map((value, index) => )
       console.log(msg.attachments.size);
       var jsonData = {
         events: [
           {
             type: "discord",
-            image: msg.attachments.first().url
+            channelname: msg.channel.name,
+            name: msg.author.username,
+            image: file[0],
+            imagesize: msg.attachments.size,
+            message: message.cleanContent
+          }
+        ]
+      }
+    }else if (check(file, msg.attachments.size)==2) {
+      // 添付された全ての画像(ファイル)のURLを取得する
+      //message.attachments.map((value, index) => )
+      console.log(msg.attachments.size);
+      var jsonData = {
+        events: [
+          {
+            type: "discord",
+            channelname: msg.channel.name,
+            name: msg.author.username,
+            image: file[0],
+            image1: file[1],
+            imagesize: msg.attachments.size,
+            message: message.cleanContent
+          }
+        ]
+      }
+    }else if (check(file, msg.attachments.size)==3) {
+      // 添付された全ての画像(ファイル)のURLを取得する
+      //message.attachments.map((value, index) => )
+      console.log(msg.attachments.size);
+      var jsonData = {
+        events: [
+          {
+            type: "discord",
+            channelname: msg.channel.name,
+            name: msg.author.username,
+            image: file[0],
+            image1: file[1],
+            image2: file[2],
+            imagesize: msg.attachments.size,
+            message: message.cleanContent
+          }
+        ]
+      }
+    }else if (check(file, msg.attachments.size)==4) {
+      // 添付された全ての画像(ファイル)のURLを取得する
+      //message.attachments.map((value, index) => )
+      console.log(msg.attachments.size);
+      var jsonData = {
+        events: [
+          {
+            type: "discord",
+            channelname: msg.channel.name,
+            name: msg.author.username,
+            image: file[0],
+            image1: file[1],
+            image2: file[2],
+            image3: file[3],
+            imagesize: msg.attachments.size,
+            message: message.cleanContent
+          }
+        ]
+      }
+    }else if(msg.attachments.size){
+      //const files=message.attachments.map(attachment=>attachment.url)
+      var jsonData = {
+        events: [
+          {
+            type: "discord",
+            channelname: msg.channel.name,
+            name: msg.author.username,
+            message: file + " " +message.cleanContent
           }
         ]
       }
@@ -83,22 +155,40 @@ client.on("message", message => {
             type: "discord",
             channelname: msg.channel.name,
             name: msg.author.username,
-            message: msg.content
+            message: message.cleanContent
           }
         ]
       };
     }
     //GAS URLに送る
-    console.log(msg.author.username);
-    console.log(msg.content);
+    //console.log(msg.author.username);
+    //console.log(msg.content);
     //console.log(msg.attachments.first().url);
     //console.log(msg);
     post(process.env.GAS_URL, jsonData);
+  }
+  
+  function check(file, size){
+      var cnt=0;
+      file.forEach(function( value ) {
+ 
+        if(value.indexOf(".gif")!=-1) cnt+=1;
+        if(value.indexOf(".png")!=-1) cnt+=1;
+        if(value.indexOf(".PNG")!=-1) cnt+=1;
+        if(value.indexOf(".jpg")!=-1) cnt+=1;
+        if(value.indexOf(".JPG")!=-1) cnt+=1;
+        if(value.indexOf(".jpeg")!=-1) cnt+=1;
+        if(value.indexOf(".JPEG")!=-1) cnt+=1;
+        
+      });
+      if(size==cnt) return cnt;
+      else return -1;
   }
 
   function post(url, data) {
     //requestモジュールを使う
     //console.log("a");
+    //console.log(message);
     var request = require("request");
     var options = {
       uri: url,
